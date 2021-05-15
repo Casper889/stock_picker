@@ -1,0 +1,10 @@
+*.log.*
+*.log
+*/__pycache__
+*/__pycache__/*
+*.db
+*.ini
+*/versions
+*/verions/
+*__pycache__
+*.mako
