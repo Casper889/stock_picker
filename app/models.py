@@ -84,6 +84,9 @@ class Holding(db.Model):
     amount = db.Column(db.Integer)
     value = db.Column(db.Float)
 
+    def __repr__(self):
+        return '<Holding {} {} @ {}>'.format(self.ticker, self.amount, self.purchase_price)
+
 
 
 
