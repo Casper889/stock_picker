@@ -26,10 +26,10 @@ class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class TransactionForm(FlaskForm):
-    ticker = TextAreaField('ticker', validators=[DataRequired()]),
+    ticker = TextAreaField('ticker', validators=[DataRequired()])
     price = DecimalField('price', places=2, rounding=decimal.ROUND_UP, validators=[DataRequired()])
     amount = IntegerField('shares', validators=[DataRequired()])
     company = TextAreaField('company', validators=[DataRequired()])
-    buy_or_sell = SelectField(u'Buy or Sell', choices=[('BUY', 'Buy'), ('SELL', 'Sell')])
+    buy_or_sell = SelectField(u'Buy or Sell', choices=[('BUY' , 'Buy'),('SELL', 'Sell')])
     submit = SubmitField('Submit')
 

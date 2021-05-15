@@ -19,8 +19,9 @@ def before_request():
 def index():
     form = TransactionForm()
     if form.validate_on_submit():
-        transaction = Transaction(ticker=form.ticker.data, price = form.price.data, amount = form.amount.data,\
-            company = form.company.data, buy_or_sell = 'BUY', client=current_user)
+        print(form.buy_or_sell.data)
+        transaction = Transaction(ticker=form.ticker.data, price = float(form.price.data), amount = form.amount.data,\
+            company = form.company.data, buy_or_sell = form.buy_or_sell.data, client=current_user)
         db.session.add(transaction)
         db.session.commit()
         flash(('Your Transaction has been processed'))
