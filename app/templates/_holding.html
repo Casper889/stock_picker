@@ -1,21 +1,20 @@
 <table class="table table-hover">
     <tr>
         <td width="70px">
-            <a href="{{ url_for('main.user', username=transaction.client.username) }}">
-                <img src="{{ transaction.client.avatar(70) }}" />
+            <a href="{{ url_for('main.user', username=holding.client.username) }}">
+                <img src="{{ holding.client.avatar(70) }}" />
             </a>
         </td>
         <td>
             {% set user_link %}
-                <a href="{{ url_for('main.user', username=transaction.client.username) }}">
-                    {{ transaction.client.username }}
+                <a href="{{ url_for('main.user', username=holding.client.username) }}">
+                    {{ holding.client.username }}
                 </a>
             {% endset %}
-            {{ _('%(username)s transaction %(when)s',
-                username=user_link, when=moment(transaction.timestamp).fromNow()) }}
+            {{holding.client.username}}
             <br>
-            <span id="holding{{ holding.id }}">{{ holding.ticker } { holding.company } @ {holding.purchase_price}
-                shares: { holding.amount } value: {holding.value}} </span>
+            <span id="holding{{ holding.id }}">{{ holding.ticker , holding.company , holding.purchase_price
+                ,holding.amount  , holding.value}} </span>
         </td>
     </tr>
 </table>
