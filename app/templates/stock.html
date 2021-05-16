@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
-{% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
-{% endblock %}
-
 {% block content %}
 
 <body>
@@ -13,6 +9,7 @@
 <canvas id="myChart" width="600" height="400"></canvas>
 <p id="caption">The chart is displaying a simple line chart.</p>
 
+{% block javascript %}
 <script>
 // bar chart data
 var barData = {
@@ -64,6 +61,5 @@ var LineChartDemo = new Chart(mychart).Line(barData, {
 </script>
 
 </body>
-
-
+{% endblock %}
 {% endblock %}
