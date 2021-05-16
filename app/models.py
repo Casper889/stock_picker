@@ -88,6 +88,15 @@ class Holding(db.Model):
         return '<Holding {} {} @ {}>'.format(self.ticker, self.amount, self.purchase_price)
 
 
+class Tickers(db.Model):
+    __bind_key__= 'tickers'
+    ticker = db.Column('Ticker', db.String(8), primary_key=True)
+    name = db.Column('Name', db.String(50))
+    exchange = db.Column('Exchange', db.String(5))
+    category = db.Column('Category Name', db.String(50))
+    country = db.Column('Country', db.String(20))
 
+    def __repr__(self):
+        return '<Ticker {} {} @ {}>'.format(self.ticker, self.name, self.country)
 
     
