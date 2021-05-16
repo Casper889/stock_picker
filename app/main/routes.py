@@ -1,11 +1,12 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, \
+from flask import json, render_template, flash, redirect, url_for, request, \
     jsonify, current_app
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm, TransactionForm
-from app.models import User, Transaction, Holding
+from app.main.forms import EditProfileForm, EmptyForm, SearchForm, TransactionForm
+from app.models import User, Transaction, Holding, Tickers
 from app.main import bp
+import yfinance as yf
 
 @bp.before_app_request
 def before_request():
@@ -17,15 +18,6 @@ def before_request():
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    form = TransactionForm()
-    if form.validate_on_submit():
-        print(form.buy_or_sell.data)
-        transaction = Transaction(ticker=form.ticker.data, price = float(form.price.data), amount = form.amount.data,\
-            company = form.company.data, buy_or_sell = form.buy_or_sell.data, client=current_user)
-        db.session.add(transaction)
-        db.session.commit()
-        flash(('Your Transaction has been processed'))
-        return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     transactions = Transaction.query.order_by(Transaction.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
@@ -33,23 +25,31 @@ def index():
         if transactions.has_next else None
     prev_url = url_for('main.index', page=transactions.prev_num) \
         if transactions.has_prev else None
-    return render_template('index.html', title=('Home'), form=form,
+    return render_template('index.html', title=('Home'),
                            transactions=transactions.items, next_url=next_url,
                            prev_url=prev_url)
 
-@bp.route('/explore')
+@bp.route('/trade', methods=['GET', 'POST'])
 @login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-    transactions = Transaction.query.order_by(Transaction.timestamp.desc()).paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.explore', transactions=transactions.next_num) \
-        if transactions.has_next else None
-    prev_url = url_for('main.explore', page=transactions.prev_num) \
-        if transactions.has_prev else None
-    return render_template('index.html', title=('Explore'),
-                           posts=transactions.items, next_url=next_url,
-                           prev_url=prev_url)
+def trade():
+    form_search = SearchForm(request.form)
+    if form_search.validate_on_submit():
+        companies = Tickers.query.filter(Tickers.ticker.like('%{}%'.format(form_search.ticker.data)) \
+             | Tickers.name.like('%{}%'.format(form_search.ticker.data)))[0:100]
+        return render_template('trade.html', title=('Trade'),
+                                form=form_search, companies = companies)
+    return render_template('trade.html', title=('Trade'),
+                            form=form_search)
+
+@bp.route('/ticker/<sticker>', methods=['GET', 'POST'])
+@login_required
+def ticker(sticker):
+    history = yf.Ticker(sticker).history(period='12mo').Close
+    legend = 'Monthly Data'
+    labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
+    values = [10, 9, 8, 7, 6, 4, 7, 8]
+    legend = 'test'
+    return render_template('stock.html', legend=legend, labels=labels, values=values)
 
 @bp.route('/user/<username>')
 @login_required
@@ -82,3 +82,15 @@ def edit_profile():
     return render_template('edit_profile.html', title=('Edit Profile'),
                            form=form)
 
+
+"""
+form = TransactionForm()
+if form.validate_on_submit():
+    print(form.buy_or_sell.data)
+    transaction = Transaction(ticker=form.ticker.data, price = float(form.price.data), amount = form.amount.data,\
+        company = form.company.data, buy_or_sell = form.buy_or_sell.data, client=current_user)
+    db.session.add(transaction)
+    db.session.commit()
+    flash(('Your Transaction has been processed'))
+    return redirect(url_for('main.index'))
+"""

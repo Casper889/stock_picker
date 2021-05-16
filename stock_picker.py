@@ -1,8 +1,8 @@
 from app import create_app, db
-from app.models import User, Transaction
+from app.models import User, Transaction, Tickers
 
 app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Transaction': Transaction}
+    return {'db': db, 'User': User, 'Transaction': Transaction, 'Tickers': Tickers}

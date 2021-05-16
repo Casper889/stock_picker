@@ -99,4 +99,5 @@ class Tickers(db.Model):
     def __repr__(self):
         return '<Ticker {} {} @ {}>'.format(self.ticker, self.name, self.country)
 
-    
+    def as_dict(self):
+        return { 'ticker': self.ticker}

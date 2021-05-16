@@ -11,7 +11,7 @@
                         {{ transaction.client.username }}
                     </a>
                 {% endset %}
-                Purchased {{ moment(transaction.timestamp).fromNow() }}:
+                {{ transaction.client.username }} Purchased {{ moment(transaction.timestamp).fromNow() }}:
                 <br>
                 <span id="transaction{{ transaction.id }}">{{ transaction.buy_or_sell, transaction.amount, transaction.ticker,
                     transaction.purchase_price }} </span>
