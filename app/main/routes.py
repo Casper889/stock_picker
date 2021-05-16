@@ -8,6 +8,18 @@ from app.models import User, Transaction, Holding, Tickers
 from app.main import bp
 import yfinance as yf
 
+labels = [
+    'JAN', 'FEB', 'MAR', 'APR',
+    'MAY', 'JUN', 'JUL', 'AUG',
+    'SEP', 'OCT', 'NOV', 'DEC'
+]
+
+values = [
+    967.67, 1190.89, 1079.75, 1349.19,
+    2328.91, 2504.28, 2873.83, 4764.87,
+    4349.29, 6458.30, 9907, 16297
+]
+
 @bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
@@ -45,11 +57,13 @@ def trade():
 @login_required
 def ticker(sticker):
     history = yf.Ticker(sticker).history(period='12mo').Close
-    legend = 'Monthly Data'
-    labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
-    values = [10, 9, 8, 7, 6, 4, 7, 8]
-    legend = 'test'
-    return render_template('stock.html', legend=legend, labels=labels, values=values)
+    maxim = max(history)*1.2
+    minim = min(history)*0.8
+    x = [x.strftime("%d/%m/%Y") for x in list(history.index)]
+    y = list(history)
+    zipped = json.dumps([{'x':x, 'y':y} for x,y in zip(x,y)])
+    print(minim)
+    return render_template('stock.html', title=sticker, x_min=x[0],x_max=x[-1], y_max=maxim, y_min=minim, data=zipped)
 
 @bp.route('/user/<username>')
 @login_required
